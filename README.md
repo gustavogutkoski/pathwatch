@@ -47,9 +47,10 @@ Key architectural decisions are recorded as ADRs in [`docs/adr`](docs/adr).
 
 ## Roadmap
 
-- [x] Walking skeleton: one service, Prometheus, Grafana, first dashboard via Terraform
-- [ ] Full ticket-purchase journey
+- [x] Walking skeleton
+- [ ] Booking and payment services, first business metrics
 - [ ] Centralized logs with Loki
 - [ ] Journey monitoring module
+- [ ] Ticket issuance (async) and distributed tracing with OpenTelemetry
 - [ ] Chaos scenarios
 - [ ] SLOs as code
