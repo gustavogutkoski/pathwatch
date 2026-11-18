@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.encoretickets.booking.catalog.CatalogUnavailableException;
+import com.encoretickets.booking.reservation.exception.EventNotFoundException;
+import com.encoretickets.booking.reservation.exception.InvalidSeatException;
 import com.encoretickets.booking.reservation.exception.ReservationNotFoundException;
 import com.encoretickets.booking.reservation.exception.SeatUnavailableException;
 
@@ -45,6 +48,36 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
                 HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
         problem.setTitle("Internal server error");
+        return problem;
+    }
+
+    @ExceptionHandler(EventNotFoundException.class)
+    public ProblemDetail handleEventNotFound(EventNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create(PROBLEM_BASE_URI + "event-not-found"));
+        problem.setTitle("Event not found");
+        problem.setProperty("eventId", ex.eventId());
+        return problem;
+    }
+
+    @ExceptionHandler(InvalidSeatException.class)
+    public ProblemDetail handleInvalidSeat(InvalidSeatException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create(PROBLEM_BASE_URI + "invalid-seat"));
+        problem.setTitle("Invalid seat");
+        problem.setProperty("eventId", ex.eventId());
+        problem.setProperty("seatNumber", ex.seatNumber());
+        problem.setProperty("totalSeats", ex.totalSeats());
+        return problem;
+    }
+
+    @ExceptionHandler(CatalogUnavailableException.class)
+    public ProblemDetail handleCatalogUnavailable(CatalogUnavailableException ex) {
+        log.error("Event catalog is unavailable", ex);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.SERVICE_UNAVAILABLE, "Reservations are temporarily unavailable");
+        problem.setType(URI.create(PROBLEM_BASE_URI + "service-unavailable"));
+        problem.setTitle("Service unavailable");
         return problem;
     }
 }
