@@ -1,4 +1,4 @@
-package com.encoretickets.booking.reservation;
+package com.encoretickets.booking.reservation.exception;
 
 public class ReservationNotFoundException extends RuntimeException {
 

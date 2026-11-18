@@ -1,4 +1,4 @@
-package com.encoretickets.booking.reservation;
+package com.encoretickets.booking.reservation.api;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;

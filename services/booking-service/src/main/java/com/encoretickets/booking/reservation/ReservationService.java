@@ -7,6 +7,9 @@ import java.time.Instant;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.encoretickets.booking.reservation.exception.ReservationNotFoundException;
+import com.encoretickets.booking.reservation.exception.SeatUnavailableException;
+
 @Service
 public class ReservationService {
 
