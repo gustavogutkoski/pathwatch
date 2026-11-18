@@ -54,3 +54,7 @@ Key architectural decisions are recorded as ADRs in [`docs/adr`](docs/adr).
 - [ ] Ticket issuance (async) and distributed tracing with OpenTelemetry
 - [ ] Chaos scenarios
 - [ ] SLOs as code
+
+## Articles
+
+- https://gustavoandrgutkoski.substack.com/p/de-clickops-para-observability-as
