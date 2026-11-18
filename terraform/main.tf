@@ -34,10 +34,10 @@ resource "grafana_dashboard" "event_catalog" {
           legendFormat = "{{uri}}"
         }]
       },
-      {
+        {
         id      = 2
         type    = "timeseries"
-        title   = "Average latency"
+        title   = "Latency (p95 / p99)"
         gridPos = { x = 12, y = 0, w = 12, h = 8 }
         datasource = {
           type = "prometheus"
@@ -46,11 +46,18 @@ resource "grafana_dashboard" "event_catalog" {
         fieldConfig = {
           defaults = { unit = "s" }
         }
-        targets = [{
-          refId        = "A"
-          expr         = "sum(rate(http_server_requests_seconds_sum{job=\"event-catalog\", uri!~\"/actuator.*\"}[1m])) / sum(rate(http_server_requests_seconds_count{job=\"event-catalog\", uri!~\"/actuator.*\"}[1m]))"
-          legendFormat = "avg latency"
-        }]
+        targets = [
+          {
+            refId        = "A"
+            expr         = "histogram_quantile(0.95, sum by (le) (rate(http_server_requests_seconds_bucket{job=\"event-catalog\", uri!~\"/actuator.*\"}[5m])))"
+            legendFormat = "p95"
+          },
+          {
+            refId        = "B"
+            expr         = "histogram_quantile(0.99, sum by (le) (rate(http_server_requests_seconds_bucket{job=\"event-catalog\", uri!~\"/actuator.*\"}[5m])))"
+            legendFormat = "p99"
+          }
+        ]
       }
     ]
   })
