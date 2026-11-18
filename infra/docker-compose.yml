@@ -25,6 +25,12 @@ services:
     build: ../services/event-catalog
     ports:
       - "8081:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/actuator/health/readiness"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
 
 volumes:
   prometheus-data:
