@@ -2,7 +2,6 @@ package com.encoretickets.catalog.event;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,9 +23,8 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Event> get(@PathVariable String id) {
+    public Event get(@PathVariable String id) {
         return repository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new EventNotFoundException(id));
     }
 }
