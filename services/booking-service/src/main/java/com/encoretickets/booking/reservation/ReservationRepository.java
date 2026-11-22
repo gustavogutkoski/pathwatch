@@ -47,4 +47,10 @@ public class ReservationRepository {
                 .filter(reservation -> reservation.isExpiredAt(now))
                 .toList();
     }
+
+    public long countHeld() {
+        return reservations.values().stream()
+                .filter(reservation -> reservation.status() == ReservationStatus.HELD)
+                .count();
+    }
 }
