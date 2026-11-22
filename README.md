@@ -24,10 +24,11 @@ event catalog → seat booking → payment → ticket issuance.
 Requirements: Docker, Make and Terraform.
 
 ```bash
-make up        # start the local stack
-make tf-init   # first time only
-make tf-apply  # create Grafana resources
-make traffic   # generate sample traffic
+make up               # start the local stack
+make tf-init          # first time only
+make tf-apply         # create Grafana resources
+make event-traffic    # generate sample traffic to event-catalog
+make booking-traffic  # generate sample reservations
 ```
 
 Then open Grafana at http://localhost:3000 (admin/admin).
@@ -35,12 +36,12 @@ Run `make` to see all available commands.
 
 ## Local endpoints
 
-| Component     | URL                    |
-|---------------|------------------------|
-| Grafana       | http://localhost:3000  |
-| Prometheus    | http://localhost:9090  |
-| event-catalog | http://localhost:8081  |
-| booking-service | http://localhost:8082  |
+| Component       | URL                   |
+|-----------------|-----------------------|
+| Grafana         | http://localhost:3000 |
+| Prometheus      | http://localhost:9090 |
+| event-catalog   | http://localhost:8081 |
+| booking-service | http://localhost:8082 |
 
 ## Design decisions
 
@@ -49,9 +50,10 @@ Key architectural decisions are recorded as ADRs in [`docs/adr`](docs/adr).
 ## Roadmap
 
 - [x] Walking skeleton
-- [ ] Booking and payment services, first business metrics
+- [ ] Booking and payment services, first business metrics, service hardening
 - [ ] Centralized logs with Loki
 - [ ] Journey monitoring module
+- [ ] Persistence with PostgreSQL
 - [ ] Ticket issuance (async) and distributed tracing with OpenTelemetry
 - [ ] Chaos scenarios
 - [ ] SLOs as code
