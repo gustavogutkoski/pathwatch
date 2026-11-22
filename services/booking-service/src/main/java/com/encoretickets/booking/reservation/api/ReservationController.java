@@ -40,4 +40,9 @@ public class ReservationController {
     public Reservation get(@PathVariable String id) {
         return service.get(id);
     }
+
+    @PostMapping("/{id}/confirm")
+    public Reservation confirm(@PathVariable String id) {
+        return service.confirm(id);
+    }
 }

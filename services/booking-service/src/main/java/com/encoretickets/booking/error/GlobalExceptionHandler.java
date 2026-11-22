@@ -13,6 +13,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.encoretickets.booking.catalog.CatalogUnavailableException;
 import com.encoretickets.booking.reservation.exception.EventNotFoundException;
 import com.encoretickets.booking.reservation.exception.InvalidSeatException;
+import com.encoretickets.booking.reservation.exception.ReservationExpiredException;
 import com.encoretickets.booking.reservation.exception.ReservationNotFoundException;
 import com.encoretickets.booking.reservation.exception.SeatUnavailableException;
 
@@ -78,6 +79,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.SERVICE_UNAVAILABLE, "Reservations are temporarily unavailable");
         problem.setType(URI.create(PROBLEM_BASE_URI + "service-unavailable"));
         problem.setTitle("Service unavailable");
+        return problem;
+    }
+
+    @ExceptionHandler(ReservationExpiredException.class)
+    public ProblemDetail handleReservationExpired(ReservationExpiredException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create(PROBLEM_BASE_URI + "reservation-expired"));
+        problem.setTitle("Reservation expired");
+        problem.setProperty("reservationId", ex.reservationId());
         return problem;
     }
 }

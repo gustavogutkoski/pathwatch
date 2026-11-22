@@ -11,6 +11,7 @@ import com.encoretickets.booking.catalog.CatalogEvent;
 import com.encoretickets.booking.catalog.EventCatalogClient;
 import com.encoretickets.booking.reservation.exception.EventNotFoundException;
 import com.encoretickets.booking.reservation.exception.InvalidSeatException;
+import com.encoretickets.booking.reservation.exception.ReservationExpiredException;
 import com.encoretickets.booking.reservation.exception.ReservationNotFoundException;
 import com.encoretickets.booking.reservation.exception.SeatUnavailableException;
 
@@ -48,5 +49,24 @@ public class ReservationService {
     public Reservation get(String id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ReservationNotFoundException(id));
+    }
+
+    public Reservation confirm(String id) {
+        Instant now = clock.instant();
+
+        Reservation result = repository.update(id, current -> {
+            if (current.status() != ReservationStatus.HELD) {
+                return current;
+            }
+            return current.isExpiredAt(now)
+                    ? current.withStatus(ReservationStatus.EXPIRED)
+                    : current.withStatus(ReservationStatus.CONFIRMED);
+        }).orElseThrow(() -> new ReservationNotFoundException(id));
+
+        if (result.status() == ReservationStatus.EXPIRED) {
+            repository.releaseSeat(result);
+            throw new ReservationExpiredException(id);
+        }
+        return result;
     }
 }

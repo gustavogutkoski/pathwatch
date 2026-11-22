@@ -17,4 +17,8 @@ public record Reservation(
     public String seatKey() {
         return eventId + ":" + seatNumber;
     }
+
+    public boolean isExpiredAt(Instant now) {
+        return !now.isBefore(expiresAt);
+}
 }

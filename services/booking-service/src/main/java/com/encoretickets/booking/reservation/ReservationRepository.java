@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.UnaryOperator;
 
 import org.springframework.stereotype.Repository;
 
@@ -29,5 +30,13 @@ public class ReservationRepository {
 
     public Optional<Reservation> findById(String id) {
         return Optional.ofNullable(reservations.get(id));
+    }
+
+    public Optional<Reservation> update(String id, UnaryOperator<Reservation> change) {
+        return Optional.ofNullable(reservations.computeIfPresent(id, (key, current) -> change.apply(current)));
+    }
+
+    public void releaseSeat(Reservation reservation) {
+        seats.remove(reservation.seatKey(), reservation.id());
     }
 }
