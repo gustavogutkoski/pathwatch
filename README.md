@@ -40,6 +40,7 @@ Run `make` to see all available commands.
 | Grafana       | http://localhost:3000  |
 | Prometheus    | http://localhost:9090  |
 | event-catalog | http://localhost:8081  |
+| booking-service | http://localhost:8082  |
 
 ## Design decisions
 
