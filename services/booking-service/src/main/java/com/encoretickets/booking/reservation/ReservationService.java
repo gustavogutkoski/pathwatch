@@ -3,6 +3,7 @@ package com.encoretickets.booking.reservation;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -68,5 +69,31 @@ public class ReservationService {
             throw new ReservationExpiredException(id);
         }
         return result;
+    }
+
+    public int expireOverdueHolds() {
+        Instant now = clock.instant();
+        int expiredCount = 0;
+
+        for (Reservation candidate : repository.findHeldExpiredAt(now)) {
+            AtomicBoolean expiredNow = new AtomicBoolean(false);
+
+            repository.update(candidate.id(), current -> {
+                if (current.status() == ReservationStatus.HELD && current.isExpiredAt(now)) {
+                    expiredNow.set(true);
+                    return current.withStatus(ReservationStatus.EXPIRED);
+                }
+                return current;
+            }).ifPresent(reservation -> {
+                if (expiredNow.get()) {
+                    repository.releaseSeat(reservation);
+                }
+            });
+
+            if (expiredNow.get()) {
+                expiredCount++;
+            }
+        }
+        return expiredCount;
     }
 }

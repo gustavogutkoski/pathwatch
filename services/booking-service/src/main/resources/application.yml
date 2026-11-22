@@ -21,6 +21,7 @@ management:
 
 booking:
   hold-duration: 2m
+  expiration-interval: PT5S
 
 catalog:
   base-url: http://localhost:8081

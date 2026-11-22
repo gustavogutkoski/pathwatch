@@ -1,6 +1,7 @@
 package com.encoretickets.booking.reservation;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,5 +39,12 @@ public class ReservationRepository {
 
     public void releaseSeat(Reservation reservation) {
         seats.remove(reservation.seatKey(), reservation.id());
+    }
+
+    public List<Reservation> findHeldExpiredAt(Instant now) {
+        return reservations.values().stream()
+                .filter(reservation -> reservation.status() == ReservationStatus.HELD)
+                .filter(reservation -> reservation.isExpiredAt(now))
+                .toList();
     }
 }
